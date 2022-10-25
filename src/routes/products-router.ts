@@ -1,32 +1,22 @@
 import {Request, Response, Router} from "express";
+import {ProductsRepository} from "../repositories/product-repository";
 
-let products=[
-    {id:1, title:'bread'},
-    {id:2, title: 'milk'}
-]
+
 
 export const productsRouter=Router()
 
 productsRouter.get('/', (req:Request, res:Response) => {
-    if(req.query.title){
-        let searchTitle=req.query.title.toString()
-        res.send(products.filter(p=>p.title.includes(searchTitle)))
-    }else {
-        res.send(products)
-    }
+   const product=ProductsRepository.findTitle(req.query.title?.toString())
+    res.send(product)
 })
 
 productsRouter.post('/', (req:Request, res:Response) => {
-    const newProduct={
-        id:+(new Date()),
-        title:req.body.title
-    }
-    products.push(newProduct)
+    const newProduct=ProductsRepository.createProduct(req.body.title)
     res.status(201).send(newProduct)
 })
 
 productsRouter.get('/:id', (req:Request, res:Response) => {
-    const product=products.find(p=>p.id===+req.params.id)
+    const product=ProductsRepository.getProductById(+req.params.id)
     if (product){
         res.send(product)
     } else {
@@ -35,9 +25,8 @@ productsRouter.get('/:id', (req:Request, res:Response) => {
 })
 
 productsRouter.put('/:id', (req:Request, res:Response) => {
-    const product=products.find(p=>p.id===+req.params.id)
+    const product=ProductsRepository.updateProductTitle(+req.params.id,req.body.title)
     if (product){
-        product.title=req.body.title
         res.send(product)
     } else {
         res.send(404)
@@ -45,9 +34,8 @@ productsRouter.put('/:id', (req:Request, res:Response) => {
 })
 
 productsRouter.delete('/:id', (req:Request, res:Response) => {
-    const product=products.find(p=>p.id===+req.params.id)
-    if (product){
-        products=products.filter(p=>p.id!==+req.params.id)
+    const isDeleted=ProductsRepository.deleteProduct(+req.params.id)
+    if (isDeleted){
         res.send(204)
     } else {
         res.send(404)
