@@ -13,7 +13,7 @@ app.get('/', (req:Request, res:Response) => {
 
 app.use('/products',productsRouter)
 
-app.use('/address',addressRouter)
+app.use('/addresses',addressRouter)
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)

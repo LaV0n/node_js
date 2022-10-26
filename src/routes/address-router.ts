@@ -1,18 +1,17 @@
 import {Request, Response, Router} from "express";
-
-const addresses=[
-    {id:1,street:'nowa'},
-    {id:2,street: 'old'}
-]
+import {addressesRepository} from "../repositories/address-repository";
+import {header} from "express-validator";
 
 export const addressRouter=Router()
 
-addressRouter.get('/', (req:Request, res:Response) => {
+addressRouter.get('/',
+    (req:Request, res:Response) => {
+    const addresses=addressesRepository.getAddresses()
     res.send(addresses)
 })
 
 addressRouter.get('/:id', (req:Request, res:Response) => {
-    const address=addresses.find(a=>a.id===+req.params.id)
+    const address=addressesRepository.getAddressByID(+req.params.id)
     if(address){
         res.send(address)
     }else {
